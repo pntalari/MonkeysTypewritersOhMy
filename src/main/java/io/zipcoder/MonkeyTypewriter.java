@@ -3,8 +3,6 @@ package io.zipcoder;
 public class MonkeyTypewriter {
     public static void main(String[] args) {
 
-        String city1 = "";
-        String city2 = "";
         final String introduction = "It was the best of times,\n" +
                 "it was the blurst of times,\n" +
                 "it was the age of wisdom,\n" +
@@ -26,37 +24,29 @@ public class MonkeyTypewriter {
         // Do all of the Monkey / Thread building here
         // For each Copier(one safe and one unsafe), create and start 5 monkeys copying the introduction to
         // A Tale Of Two Cities.
-        UnsafeCopier unsafeCopier = new UnsafeCopier(introduction);
+        Copier unsafeCopier = new UnsafeCopier(introduction);
+        for (int i = 0; i <5 ; i++) {
+            Thread monkey = new Thread(unsafeCopier);
+            monkey.start();
+        }
 
-        Thread monkey1 = new Thread(unsafeCopier);
-        monkey1.start();
-        Thread monkey2 = new Thread(unsafeCopier);
-        monkey2.start();
-        Thread monkey3 = new Thread(unsafeCopier);
-        monkey3.start();
-        Thread monkey4 = new Thread(unsafeCopier);
-        monkey4.start();
-        Thread monkey5 = new Thread(unsafeCopier);
-        monkey5.start();
+        Copier safeCopier = new SafeCopier(introduction);
+        for (int i = 0; i <5 ; i++) {
+            Thread monkey = new Thread(safeCopier);
+            monkey.start();
+        }
 
-        SafeCopier safeCopier = new SafeCopier(introduction);
-        Thread monkey6 = new Thread(safeCopier);
-        monkey6.start();
-        Thread monkey7 = new Thread(safeCopier);
-        monkey7.start();
-        Thread monkey8 = new Thread(safeCopier);
-        monkey8.start();
-        Thread monkey9 = new Thread(safeCopier);
-        monkey9.start();
-        Thread monkey10 = new Thread(safeCopier);
-        monkey10.start();
-
+        Copier sync = new SyncCopier(introduction);
+        for (int i = 0; i <5 ; i++) {
+            Thread monkey = new Thread(sync);
+            monkey.start();
+        }
 
 
         // This wait is here because main is still a thread and we want the main method to print the finished copies
         // after enough time has passed.
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             System.out.println("MAIN INTERRUPTED");
         }
@@ -65,7 +55,10 @@ public class MonkeyTypewriter {
         System.out.println(unsafeCopier.copied);
         System.out.println("Unsafe Copy ended!");
 
-        System.out.println(safeCopier.safeCopy);
+        System.out.println(safeCopier.copied);
         System.out.println("Safe Copy ended!");
+
+        System.out.println(sync.copied);
+        System.out.println("Sync Copy ended!");
     }
 }
